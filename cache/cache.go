@@ -1,6 +1,7 @@
 package cache
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -8,6 +9,13 @@ import (
 type Cache struct {
 	lock sync.RWMutex
 	data map[string][]byte
+}
+
+type Cacher interface {
+	Set([]byte, []byte, time.Duration) error
+	Has([]byte) bool
+	Get([]byte) ([]byte, error)
+	Del([]byte) error
 }
 
 func New() *Cache {
@@ -20,6 +28,15 @@ func (c *Cache) Set(key, value []byte, t time.Duration) error {
 	c.lock.Lock()
 	defer c.lock.Unlock()
 	c.data[string(key)] = value
+
+	// if t > 0, set a timer to delete the key
+	if t > 0 {
+		go func() {
+			<-time.After(t)
+			c.Del(key)
+		}()
+	}
+
 	return nil
 }
 
@@ -38,7 +55,7 @@ func (c *Cache) Get(key []byte) ([]byte, error) {
 		return value, nil
 	}
 
-	return nil, nil
+	return nil, fmt.Errorf("key not found")
 }
 
 func (c *Cache) Del(key []byte) error {
