@@ -14,3 +14,6 @@ runall: build
 	
 test:
 	@go test -v ./...
+
+benchmarks:
+	@go test -bench=. ./...
