@@ -10,7 +10,7 @@ run: build
 	./bin/$(NAME)
 
 runall: build
-		./bin/ggcache --listenaddr :4000 --leaderaddr :3000
+		./bin/$(NAME) --listenaddr :4000 --leaderaddr :3000
 	
 test:
 	@go test -v ./...
