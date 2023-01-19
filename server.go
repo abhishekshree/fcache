@@ -15,6 +15,7 @@ import (
 type ServerConfig struct {
 	ListenAddr string
 	IsLeader   bool // by some consensus algorithm
+	LeaderAddr string
 }
 
 type Server struct {
